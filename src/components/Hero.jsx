@@ -7,7 +7,7 @@ export default function Hero() {
   const [isScrolling, setIsScrolling] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { scrollYProgress } = useScroll();
-  
+
   const particleY = useTransform(scrollYProgress, [0, 0.3], [-100, 1200]);
   const particleOpacity = useTransform(scrollYProgress, [0, 0.05, 0.25, 0.3], [0, 1, 1, 0]);
 
@@ -22,7 +22,7 @@ export default function Hero() {
 
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('mousemove', handleMouseMove);
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousemove', handleMouseMove);
@@ -76,7 +76,7 @@ export default function Hero() {
           ease: "easeInOut"
         }}
       />
-      
+
       {/* Cursor Trail */}
       <motion.div
         className="fixed w-8 h-8 border-2 border-red-500/50 rounded-full pointer-events-none z-[9998]"
@@ -202,8 +202,8 @@ export default function Hero() {
             key={i}
             className="absolute text-red-500 font-mono text-xs"
             initial={{ opacity: 0, y: -20 }}
-            animate={{ 
-              opacity: [0, 1, 0], 
+            animate={{
+              opacity: [0, 1, 0],
               y: ['0vh', '100vh'],
               x: `${Math.random() * 100}vw`
             }}
@@ -246,19 +246,19 @@ export default function Hero() {
         <motion.div
           key={tech.name}
           className={`absolute z-10 ${tech.color}`}
-          initial={{ 
+          initial={{
             x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
             y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800)
           }}
           animate={{
             x: [
-              Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000), 
+              Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
               Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
               Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000)
             ],
             y: [
               Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
-              Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800), 
+              Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
               Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800)
             ],
             rotate: [0, 360]
@@ -304,14 +304,14 @@ export default function Hero() {
         />
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#ef4444" stopOpacity="0"/>
-            <stop offset="50%" stopColor="#ef4444" stopOpacity="1"/>
-            <stop offset="100%" stopColor="#ef4444" stopOpacity="0"/>
+            <stop offset="0%" stopColor="#ef4444" stopOpacity="0" />
+            <stop offset="50%" stopColor="#ef4444" stopOpacity="1" />
+            <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#f97316" stopOpacity="0"/>
-            <stop offset="50%" stopColor="#f97316" stopOpacity="1"/>
-            <stop offset="100%" stopColor="#f97316" stopOpacity="0"/>
+            <stop offset="0%" stopColor="#f97316" stopOpacity="0" />
+            <stop offset="50%" stopColor="#f97316" stopOpacity="1" />
+            <stop offset="100%" stopColor="#f97316" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>
@@ -399,13 +399,13 @@ export default function Hero() {
       {isScrolling && (
         <motion.div
           className="fixed right-16 z-50 pointer-events-none"
-          style={{ 
+          style={{
             y: particleY,
             opacity: particleOpacity,
           }}
         >
           <div className="relative">
-            <motion.div 
+            <motion.div
               className="absolute inset-0 blur-3xl opacity-40 scale-[2]"
               style={{
                 background: 'radial-gradient(circle, rgba(239, 68, 68, 0.8) 0%, rgba(220, 38, 38, 0.4) 40%, transparent 70%)'
@@ -420,7 +420,7 @@ export default function Hero() {
                 ease: "easeInOut"
               }}
             />
-            
+
             <motion.div
               animate={{
                 rotate: [0, 360],
@@ -431,87 +431,30 @@ export default function Hero() {
                 scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
               }}
             >
-              <Sparkles 
-                className="relative w-20 h-20 text-red-400" 
-                style={{ 
+              <Sparkles
+                className="relative w-20 h-20 text-red-400"
+                style={{
                   filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.9)) drop-shadow(0 0 25px rgba(220, 38, 38, 0.6))',
-                }} 
+                }}
                 strokeWidth={1.5}
               />
             </motion.div>
-
-            <motion.div
-              className="absolute top-full left-1/2 transform -translate-x-1/2 w-0.5 h-20 bg-gradient-to-b from-red-400 to-transparent"
-              style={{
-                filter: 'blur(2px)',
-                opacity: 0.5
-              }}
-            />
-
-            {[...Array(6)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-1.5 h-1.5 rounded-full"
-                style={{
-                  top: '50%',
-                  left: '50%',
-                  background: 'radial-gradient(circle, rgba(239, 68, 68, 1), rgba(220, 38, 38, 0.6))',
-                  boxShadow: '0 0 8px rgba(239, 68, 68, 0.8)'
-                }}
-                animate={{
-                  x: [0, Math.cos(i * 60 * Math.PI / 180) * 35],
-                  y: [0, Math.sin(i * 60 * Math.PI / 180) * 35],
-                  opacity: [0.9, 0],
-                  scale: [1, 0.3]
-                }}
-                transition={{
-                  duration: 1.8,
-                  repeat: Infinity,
-                  delay: i * 0.15,
-                  ease: "easeOut"
-                }}
-              />
-            ))}
-
-            {[...Array(4)].map((_, i) => (
-              <motion.div
-                key={`star-${i}`}
-                className="absolute w-1 h-1 bg-red-300 rounded-full"
-                style={{
-                  top: '50%',
-                  left: '50%',
-                  boxShadow: '0 0 6px rgba(252, 165, 165, 1)'
-                }}
-                animate={{
-                  x: Math.cos((i * 90 + 45) * Math.PI / 180) * 25,
-                  y: Math.sin((i * 90 + 45) * Math.PI / 180) * 25,
-                  opacity: [0, 1, 0],
-                  scale: [0, 1.2, 0]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: i * 0.2 + 0.5,
-                  ease: "easeInOut"
-                }}
-              />
-            ))}
           </div>
         </motion.div>
       )}
 
       {/* Main Content */}
       <div className="container mx-auto px-6 relative z-20">
-        <div className="flex flex-col lg:flex-row items-center justify-between min-h-screen py-20 gap-12">
+        <div className="flex flex-col items-center justify-center min-h-screen py-20 gap-12">
           
-          {/* Left Side - Text Content */}
-          <motion.div 
-            className="flex-1 max-w-2xl text-center lg:text-left"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
+          {/* Center Content */}
+          <motion.div
+            className="max-w-2xl text-center"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <motion.h1 
+            <motion.h1
               className="text-6xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-tight"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
@@ -520,7 +463,7 @@ export default function Hero() {
               GOWTHAM K
             </motion.h1>
 
-            <motion.p 
+            <motion.p
               className="text-3xl md:text-4xl font-bold text-gray-200 mb-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -529,25 +472,15 @@ export default function Hero() {
               Full Stack Developer
             </motion.p>
 
-            <motion.p 
+            <motion.p
               className="text-lg text-gray-300 mb-8 leading-relaxed"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
             >
-              B.Tech Information Technology student at Sri Eshwar College of Engineering, 
-              specializing in MERN stack development 
+              B.Tech Information Technology student at Sri Eshwar College of Engineering,
+              specializing in MERN stack development
             </motion.p>
-
-            {/* Tech Stack Tags */}
-            <motion.div 
-              className="flex flex-wrap justify-center lg:justify-start gap-3 mb-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-            >
-           
-            </motion.div>
 
             {/* Download Resume Button */}
             <motion.a
@@ -565,8 +498,8 @@ export default function Hero() {
             </motion.a>
 
             {/* Contact Info */}
-            <motion.div 
-              className="flex flex-wrap justify-center lg:justify-start gap-6 text-sm text-gray-300"
+            <motion.div
+              className="flex flex-wrap justify-center gap-6 text-sm text-gray-300"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.5 }}
@@ -585,47 +518,17 @@ export default function Hero() {
               </a>
             </motion.div>
           </motion.div>
-
-          {/* Right Side - Profile Image */}
-          <motion.div 
-            className="flex-shrink-0"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <motion.div
-              className="relative cursor-none"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Glow effect */}
-              <div className="absolute -inset-4 bg-gradient-to-br from-red-500/30 to-orange-500/30 rounded-2xl filter blur-2xl opacity-50"></div>
-              
-              {/* Profile Image */}
-              <motion.img 
-                src="pic/profile.png"
-                alt="Gowtham K"
-                className="relative w-80 h-96 md:w-96 md:h-[500px] lg:w-[450px] lg:h-[600px] object-cover rounded-2xl shadow-2xl border-2 border-red-500/30"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-              />
-              
-              {/* Subtle border decoration */}
-              <div className="absolute -bottom-4 -right-4 w-full h-full border-2 border-red-500/20 rounded-2xl -z-10"></div>
-            </motion.div>
-          </motion.div>
         </div>
       </div>
 
       {/* Animated Scroll Indicator */}
-      <motion.div 
+      <motion.div
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 cursor-none"
         animate={{ y: [0, -10, 0] }}
         transition={{ repeat: Infinity, duration: 2 }}
       >
         <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center">
-          <motion.div 
+          <motion.div
             className="w-1 h-2 bg-red-500 rounded-full mt-2"
             animate={{ y: [0, 16, 0], opacity: [1, 0, 1] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
