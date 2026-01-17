@@ -8,10 +8,10 @@ const skillCategories = [
     skills: ['C', 'C++', 'Python', 'Java'],
     color: 'red',
     images: [
-      { name: 'C', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg' },
-      { name: 'C++', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg' },
-      { name: 'Python', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
-      { name: 'Java', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' }
+      { name: 'C', url: '/icons/c-original.svg' },
+      { name: 'C++', url: '/icons/cplusplus-original.svg' },
+      { name: 'Python', url: '/icons/python-original.svg' },
+      { name: 'Java', url: '/icons/java-original.svg' }
     ]
   },
   {
@@ -20,13 +20,13 @@ const skillCategories = [
     skills: ['HTML', 'CSS', 'JavaScript', 'React', 'React Native', 'Flutter', 'Node.js', 'Express.js'],
     color: 'orange',
     images: [
-      { name: 'HTML', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg' },
-      { name: 'CSS', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg' },
-      { name: 'JavaScript', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
-      { name: 'React', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-      { name: 'Node.js', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
-      { name: 'Express.js', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg' },
-      { name: 'Flutter', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg' }
+      { name: 'HTML', url: '/icons/html5-original.svg' },
+      { name: 'CSS', url: '/icons/css3-original.svg' },
+      { name: 'JavaScript', url: '/icons/javascript-original.svg' },
+      { name: 'React', url: '/icons/react-original.svg' },
+      { name: 'Node.js', url: '/icons/nodejs-original.svg' },
+      { name: 'Express.js', url: '/icons/express-original.svg' },
+      { name: 'Flutter', url: '/icons/flutter-original.svg' }
     ]
   },
   {
@@ -35,9 +35,9 @@ const skillCategories = [
     skills: ['MongoDB', 'MySQL', 'Firebase'],
     color: 'yellow',
     images: [
-      { name: 'MongoDB', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg' },
-      { name: 'MySQL', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg' },
-      { name: 'Firebase', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg' }
+      { name: 'MongoDB', url: '/icons/mongodb-original.svg' },
+      { name: 'MySQL', url: '/icons/mysql-original.svg' },
+      { name: 'Firebase', url: '/icons/firebase-plain.svg' }
     ]
   },
   {
@@ -46,11 +46,11 @@ const skillCategories = [
     skills: ['VS Code', 'PyCharm', 'GitHub', 'Figma', 'Google Colab', 'Jupyter'],
     color: 'pink',
     images: [
-      { name: 'VS Code', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg' },
-      { name: 'PyCharm', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pycharm/pycharm-original.svg' },
-      { name: 'GitHub', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg' },
-      { name: 'Figma', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
-      { name: 'Jupyter', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jupyter/jupyter-original.svg' }
+      { name: 'VS Code', url: '/icons/vscode-original.svg' },
+      { name: 'PyCharm', url: '/icons/pycharm-original.svg' },
+      { name: 'GitHub', url: '/icons/github-original.svg' },
+      { name: 'Figma', url: '/icons/figma-original.svg' },
+      { name: 'Jupyter', url: '/icons/jupyter-original.svg' }
     ]
   },
   {
