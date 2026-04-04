@@ -1,540 +1,522 @@
-import { Github, Linkedin, Mail, Phone, Code2, Database, Server, Globe, Sparkles, Download } from 'lucide-react';
-import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef, useState, useEffect, useCallback } from 'react';
+import { Github, Linkedin, Mail, Phone, Download, ArrowUpRight } from 'lucide-react';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
-export default function Hero() {
-  const heroRef = useRef(null);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const { scrollYProgress } = useScroll();
+// --- Constants ---
+const FONTS = `
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+`;
 
-  const particleY = useTransform(scrollYProgress, [0, 0.3], [-100, 1200]);
-  const particleOpacity = useTransform(scrollYProgress, [0, 0.05, 0.25, 0.3], [0, 1, 1, 0]);
+const SKILLS = [
+  'React', 'Node.js', 'MongoDB',
+  'Express', 'TypeScript', 'REST APIs'
+];
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolling(window.scrollY > 50);
-    };
+const LINKS = [
+  { icon: Phone,    label: 'Phone',    href: 'tel:7373692501',                                display: '7373 692 501' },
+  { icon: Mail,     label: 'Email',    href: 'mailto:gowtham.k2023it@sece.ac.in',             display: 'Email' },
+  { icon: Github,   label: 'GitHub',   href: 'https://github.com/GowthamkIT',                 display: 'GitHub' },
+  { icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/gowtham-k-0577a131a', display: 'LinkedIn' },
+];
+export const HERO_CONTENT = {
+  name: "Gowtham K",
+  role: "Full Stack Developer",
+  tagline: "Building scalable systems. Designing impactful experiences.",
+  description:
+    "Full Stack Developer specializing in MERN stack with experience in building scalable, user-centric web applications and real-world solutions.",
+};
 
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
+// --- GSnap Canvas Background ---
+function GSnapBackground() {
+  const canvasRef = useRef(null);
+  const mouseRef  = useRef({ x: -9999, y: -9999 });
+  const ptsRef    = useRef([]);
+  const rafRef    = useRef(null);
 
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('mousemove', handleMouseMove);
+  const N             = 72;
+  const CONNECT_DIST  = 130;
+  const SNAP_DIST     = 60;
+  const waveT         = useRef(0);
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
+  const initParticles = useCallback((w, h) => {
+    ptsRef.current = Array.from({ length: N }, () => {
+      const depth = Math.random();
+      return {
+        x:     Math.random() * w,
+        y:     Math.random() * h,
+        vx:    (Math.random() - 0.5) * (0.15 + depth * 0.25),
+        vy:    (Math.random() - 0.5) * (0.15 + depth * 0.25),
+        r:     0.8 + depth * 2.2,
+        alpha: 0.12 + depth * 0.55,
+        depth,
+      };
+    });
   }, []);
 
-  const techIcons = [
-    { Icon: Code2, color: 'text-red-500', name: 'React' },
-    { Icon: Database, color: 'text-orange-500', name: 'MongoDB' },
-    { Icon: Server, color: 'text-red-400', name: 'Node.js' },
-    { Icon: Globe, color: 'text-orange-400', name: 'Express' }
-  ];
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
 
-  const particles = Array.from({ length: 80 }, (_, i) => ({
-    id: i,
-    size: Math.random() * 4 + 1,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    duration: Math.random() * 20 + 10,
-    delay: Math.random() * 5
-  }));
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    initParticles(canvas.width, canvas.height);
 
-  const starParticles = Array.from({ length: 120 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 2 + 0.5,
-    duration: Math.random() * 6 + 3,
-    delay: Math.random() * 4
-  }));
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+
+    const onMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    };
+    const onMouseLeave = () => { mouseRef.current = { x: -9999, y: -9999 }; };
+    canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mouseleave', onMouseLeave);
+
+    const draw = () => {
+      const w = canvas.width, h = canvas.height;
+      if (!w || !h) { rafRef.current = requestAnimationFrame(draw); return; }
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Background fill
+      ctx.fillStyle = '#FAF7F2';
+      ctx.fillRect(0, 0, w, h);
+
+      // Radial glow
+      const rg = ctx.createRadialGradient(w * 0.62, h * 0.38, 0, w * 0.62, h * 0.38, w * 0.5);
+      rg.addColorStop(0, 'rgba(201,168,76,0.07)');
+      rg.addColorStop(1, 'rgba(250,247,242,0)');
+      ctx.fillStyle = rg;
+      ctx.fillRect(0, 0, w, h);
+
+      // Sine wave streams
+      waveT.current += 0.007;
+      [[h * 0.48, 2.2, 28, 0.055], [h * 0.36, 4.1, 16, 0.035], [h * 0.62, 6.8, 10, 0.025]].forEach(
+        ([yBase, freq, amp, al], idx) => {
+          ctx.beginPath();
+          for (let x = 0; x <= w; x += 2) {
+            const y = yBase + Math.sin((x / w) * Math.PI * freq + waveT.current * (1 + idx * 0.3)) * amp;
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = `rgba(201,168,76,${al})`;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      );
+
+      const pts = ptsRef.current;
+      const { x: mx, y: my } = mouseRef.current;
+
+      // Update positions
+      pts.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+        const dx = p.x - mx, dy = p.y - my;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 90) { p.vx += (dx / d) * 0.04; p.vy += (dy / d) * 0.04; }
+        const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (spd > 0.6) { p.vx = (p.vx / spd) * 0.6; p.vy = (p.vy / spd) * 0.6; }
+      });
+
+      // Connections (GSnap lines)
+      const snapped = [];
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const a = pts[i], b = pts[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < CONNECT_DIST) {
+            const isSnap = dist < SNAP_DIST;
+            const t = 1 - dist / CONNECT_DIST;
+            const depth = (a.depth + b.depth) * 0.5;
+            ctx.strokeStyle = `rgba(201,168,76,${isSnap ? t * 0.55 : t * 0.18})`;
+            ctx.lineWidth   = isSnap ? 0.8 + depth : 0.4;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+            if (isSnap) snapped.push({ ax: a.x, ay: a.y, bx: b.x, by: b.y, t });
+          }
+        }
+      }
+
+      // Snap midpoint dots
+      snapped.forEach(s => {
+        ctx.beginPath();
+        ctx.arc((s.ax + s.bx) * 0.5, (s.ay + s.by) * 0.5, 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(201,168,76,${s.t * 0.7})`;
+        ctx.fill();
+      });
+
+      // Particles
+      pts.forEach(p => {
+        if (p.depth > 0.65) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r * 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(201,168,76,0.04)';
+          ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(201,168,76,${p.alpha})`;
+        ctx.fill();
+      });
+
+      // Orbiting rings on 6 anchor nodes
+      const step = Math.floor(N / 6);
+      for (let k = 0; k < 6; k++) {
+        const p = pts[k * step];
+        ctx.strokeStyle = 'rgba(201,168,76,0.1)';
+        ctx.lineWidth   = 0.5;
+        [18, 32].forEach(r => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r + Math.sin(waveT.current * 1.2 + k) * 4, 0, Math.PI * 2);
+          ctx.stroke();
+        });
+      }
+
+      rafRef.current = requestAnimationFrame(draw);
+    };
+
+    rafRef.current = requestAnimationFrame(draw);
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      ro.disconnect();
+      canvas.removeEventListener('mousemove', onMouseMove);
+      canvas.removeEventListener('mouseleave', onMouseLeave);
+    };
+  }, [initParticles]);
 
   return (
-    <section
-      id="home"
-      ref={heroRef}
-      className="relative min-h-screen overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black cursor-none"
-    >
-      {/* Custom Cursor */}
-      <motion.div
-        className="fixed w-4 h-4 bg-red-500 rounded-full pointer-events-none z-[9999] mix-blend-difference"
-        style={{
-          left: mousePosition.x - 8,
-          top: mousePosition.y - 8,
-        }}
-        animate={{
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          duration: 0.6,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        display: 'block',
+        zIndex: 0,
+      }}
+    />
+  );
+}
 
-      {/* Cursor Trail */}
-      <motion.div
-        className="fixed w-8 h-8 border-2 border-red-500/50 rounded-full pointer-events-none z-[9998]"
-        style={{
-          left: mousePosition.x - 16,
-          top: mousePosition.y - 16,
-        }}
-        animate={{
-          scale: [1, 1.5, 1],
-          opacity: [0.5, 0.2, 0.5],
-        }}
-        transition={{
-          duration: 0.8,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
+// --- Floating Skill Chips ---
+function FloatingChips() {
+  const ALL_CHIPS = [
+    'React', 'Node.js', 'MongoDB', 'Express', 'TypeScript',
+    'REST APIs', 'Git', 'HTML5', 'CSS3', 'JSON', 'Mongoose', 'Axios',
+  ];
 
-      {/* Red Accent Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute right-0 top-0 w-full lg:w-1/2 h-full bg-gradient-to-l from-red-600/20 via-transparent to-transparent"></div>
-      </div>
+  const [positions, setPositions] = useState(() =>
+    ALL_CHIPS.map(() => ({
+      x:     50 + Math.random() * 70,   // percent
+      y:     10 + Math.random() * 80,
+      vx:    (Math.random() - 0.5) * 0.012,
+      vy:    (Math.random() - 0.5) * 0.012,
+      phase: Math.random() * Math.PI * 2,
+      alpha: 0.25 + Math.random() * 0.35,
+    }))
+  );
 
-      {/* Stellar Twinkling Stars */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        {starParticles.map((star) => (
-          <motion.div
-            key={`star-${star.id}`}
-            className="absolute rounded-full bg-gray-400"
-            style={{
-              width: star.size,
-              height: star.size,
-              left: `${star.x}%`,
-              top: `${star.y}%`,
-              filter: 'blur(0.5px)'
-            }}
-            animate={{
-              opacity: [0.2, 1, 0.2]
-            }}
-            transition={{
-              duration: star.duration,
-              delay: star.delay,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-        ))}
-      </div>
+  useEffect(() => {
+    let rafId;
+    const tick = () => {
+      setPositions(prev =>
+        prev.map(p => {
+          let { x, y, vx, vy, phase, alpha } = p;
+          phase += 0.013;
+          x += vx + Math.sin(phase * 0.6) * 0.008;
+          y += vy + Math.cos(phase * 0.5) * 0.005;
+          if (x < 2  || x > 88) vx *= -1;
+          if (y < 3  || y > 92) vy *= -1;
+          const a = 0.2 + Math.sin(phase * 0.7) * 0.18;
+          return { x, y, vx, vy, phase, alpha: Math.max(0.08, a) };
+        })
+      );
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
 
-      {/* Parallax Grid Background */}
-      <div className="absolute inset-0 z-0">
-        <svg className="w-full h-full" style={{ opacity: 0.05 }} viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
-          <g>
-            {[...Array(20)].map((_, idx) => (
-              <line
-                key={`v-${idx}`}
-                x1={(idx/19)*800} x2={(idx/19)*800} y1={0} y2={600}
-                stroke="#ef4444" strokeWidth="0.5"
-              />
-            ))}
-            {[...Array(16)].map((_, idx) => (
-              <line
-                key={`h-${idx}`}
-                x1={0} x2={800} y1={(idx/15)*600} y2={(idx/15)*600}
-                stroke="#ef4444" strokeWidth="0.5"
-              />
-            ))}
-          </g>
-        </svg>
-      </div>
-
-      {/* Aurora Borealis Background */}
-      <motion.div
-        className="absolute top-0 left-0 w-full h-64 z-[1] pointer-events-none"
-        style={{
-          background: 'linear-gradient(115deg, rgba(239,68,68,0.15) 30%, rgba(220,38,38,0.18) 73%, rgba(185,28,28,0.12) 100%)',
-          mixBlendMode: 'screen',
-          filter: "blur(12px)"
-        }}
-        animate={{
-          opacity: [0.3, 0.6, 0.3],
-          y: [0, 10, -20, 0]
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity
-        }}
-      />
-
-      {/* Space Particles */}
-      <div className="absolute inset-0 overflow-hidden z-[2]">
-        {particles.map((particle) => (
-          <motion.div
-            key={particle.id}
-            className="absolute rounded-full bg-gradient-to-r from-red-500 to-orange-600"
-            style={{
-              width: `${particle.size}px`,
-              height: `${particle.size}px`,
-              left: `${particle.x}%`,
-              top: `${particle.y}%`,
-              boxShadow: '0 0 10px rgba(239, 68, 68, 0.5)',
-            }}
-            animate={{
-              y: [0, -100, -200, -300],
-              x: [0, Math.sin(particle.id) * 50, Math.cos(particle.id) * 50, 0],
-              opacity: [0, 1, 1, 0],
-              scale: [0, 1, 1, 0.5]
-            }}
-            transition={{
-              duration: particle.duration,
-              repeat: Infinity,
-              delay: particle.delay,
-              ease: "linear"
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Animated Code Matrix */}
-      <div className="absolute inset-0 opacity-5 z-[3]">
-        {[...Array(50)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute text-red-500 font-mono text-xs"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{
-              opacity: [0, 1, 0],
-              y: ['0vh', '100vh'],
-              x: `${Math.random() * 100}vw`
-            }}
-            transition={{
-              duration: Math.random() * 10 + 5,
-              repeat: Infinity,
-              delay: Math.random() * 5
-            }}
-          >
-            {`{${Math.random() > 0.5 ? 'React' : 'Node'}}`}
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Shooting Comets */}
-      {[...Array(3)].map((_, idx) => (
-        <motion.div
-          key={`comet-${idx}`}
-          className="absolute"
+  return (
+    <>
+      {ALL_CHIPS.map((chip, i) => (
+        <span
+          key={chip}
           style={{
-            left: `${20 + idx * 15}vw`,
-            top: `${5 + idx * 20}vh`,
-            width: '100px',
-            height: '2px',
-            zIndex: 10,
+            position:      'absolute',
+            left:          `${positions[i].x}%`,
+            top:           `${positions[i].y}%`,
+            opacity:       positions[i].alpha,
+            border:        '1px solid rgba(201,168,76,0.55)',
+            color:         'rgba(139,105,20,0.85)',
+            fontFamily:    "'DM Sans', sans-serif",
+            fontSize:       10,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            padding:       '4px 10px',
+            borderRadius:   2,
+            whiteSpace:    'nowrap',
             pointerEvents: 'none',
-            background: 'linear-gradient(90deg, #ef4444 0%, rgba(239,68,68,0.0) 100%)',
-            borderRadius: '1px',
-            opacity: 0.4,
-            filter: 'blur(1px)'
-          }}
-          initial={{ x: 0, opacity: 0 }}
-          animate={{ x: '60vw', opacity: [0, 0.8, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, repeatDelay: 9 + idx * 3 }}
-        />
-      ))}
-
-      {/* Floating Tech Stack Icons */}
-      {techIcons.map((tech, index) => (
-        <motion.div
-          key={tech.name}
-          className={`absolute z-10 ${tech.color}`}
-          initial={{
-            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-            y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800)
-          }}
-          animate={{
-            x: [
-              Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-              Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-              Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000)
-            ],
-            y: [
-              Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
-              Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
-              Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800)
-            ],
-            rotate: [0, 360]
-          }}
-          transition={{
-            duration: 20 + index * 5,
-            repeat: Infinity,
-            ease: "linear"
+            zIndex:         1,
           }}
         >
-          <tech.Icon className="w-12 h-12 opacity-10" />
-        </motion.div>
+          {chip}
+        </span>
       ))}
+    </>
+  );
+}
 
-      {/* Animated Circuit Lines */}
-      <svg className="absolute inset-0 w-full h-full opacity-10" style={{ zIndex: 1 }}>
-        <motion.path
-          d="M0,50 Q400,100 800,50 T1600,50"
-          stroke="url(#gradient)"
-          strokeWidth="2"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
-        />
-        <motion.path
-          d="M0,150 Q400,200 800,150 T1600,150"
-          stroke="url(#gradient)"
-          strokeWidth="2"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 4, repeat: Infinity, repeatType: "reverse", delay: 1 }}
-        />
-        <motion.path
-          d="M0,250 Q400,300 800,250 T1600,250"
-          stroke="url(#gradient2)"
-          strokeWidth="2"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 5, repeat: Infinity, repeatType: "reverse", delay: 0.5 }}
-        />
-        <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#ef4444" stopOpacity="0" />
-            <stop offset="50%" stopColor="#ef4444" stopOpacity="1" />
-            <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
-          </linearGradient>
-          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#f97316" stopOpacity="0" />
-            <stop offset="50%" stopColor="#f97316" stopOpacity="1" />
-            <stop offset="100%" stopColor="#f97316" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-      </svg>
+// --- Main Hero Component ---
+export default function Hero() {
+  const heroRef = useRef(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [hoveredLink, setHoveredLink] = useState(null);
+  const { scrollYProgress } = useScroll();
 
-      {/* Gradient Blobs */}
-      <motion.div
-        className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full z-0"
-        style={{
-          background: 'radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.05) 100%)',
-          filter: 'blur(60px)',
-        }}
-        animate={{
-          x: [0, 100, -50, 0],
-          y: [0, 80, 120, 0],
-          scale: [1, 1.1, 1, 1]
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 15,
-          ease: 'easeInOut'
-        }}
-      />
-      <motion.div
-        className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full z-0"
-        style={{
-          background: 'radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(234, 88, 12, 0.05) 100%)',
-          filter: 'blur(60px)',
-        }}
-        animate={{
-          x: [0, -80, 60, 0],
-          y: [0, -60, -100, 0],
-          scale: [1.1, 1, 1.15, 1.1]
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 18,
-          ease: 'easeInOut'
-        }}
-      />
+  const smoothY = useSpring(useTransform(scrollYProgress, [0, 1], [0, 200]), {
+    stiffness: 60,
+    damping:   20,
+  });
 
-      {/* Geometric Shapes */}
-      <motion.div
-        className="absolute bottom-10 right-10 w-96 h-96 z-0 pointer-events-none"
-        style={{
-          opacity: 0.10,
-          filter: 'blur(1px)'
-        }}
-        animate={{
-          rotate: [0, 360],
-          scale: [0.9, 1.1, 0.9]
-        }}
-        transition={{
-          duration: 32,
-          repeat: Infinity,
-          ease: "linear"
-        }}
-      >
-        <svg viewBox="0 0 200 200" fill="none">
-          <polygon points="100,10 190,190 10,190" stroke="#ef4444" strokeWidth="8" fill="transparent" />
-        </svg>
-      </motion.div>
+  useEffect(() => {
+    const handleMouseMove = (e) => setMousePosition({ x: e.clientX, y: e.clientY });
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
-      <motion.div
-        className="absolute top-20 left-20 w-72 h-72 z-0 pointer-events-none"
-        style={{
-          opacity: 0.08,
-          filter: 'blur(1px)'
-        }}
-        animate={{
-          rotate: [0, -360],
-          scale: [1, 1.15, 1]
-        }}
-        transition={{
-          duration: 28,
-          repeat: Infinity,
-          ease: "linear"
-        }}
-      >
-        <svg viewBox="0 0 200 200" fill="none">
-          <polygon points="100,10 173,50 173,150 100,190 27,150 27,50" stroke="#f97316" strokeWidth="6" fill="transparent" />
-        </svg>
-      </motion.div>
+  return (
+    <>
+      <style>{FONTS}</style>
+      <style>{`
+        :root {
+          --cream:        #FAF7F2;
+          --warm-white:   #F5F0E8;
+          --gold:         #C9A84C;
+          --gold-light:   #E8D5A3;
+          --gold-dark:    #8B6914;
+          --charcoal:     #1A1814;
+          --stone:        #6B6560;
+          --stone-light:  #A09A94;
+          --border:       rgba(201,168,76,0.2);
+          --border-strong:rgba(201,168,76,0.45);
+        }
+        * { cursor: none !important; box-sizing: border-box; }
+        .hero-root { background: var(--cream); font-family: 'DM Sans', sans-serif; }
+        .display-font { font-family: 'Cormorant Garamond', serif; }
+        .gold-line { background: linear-gradient(90deg, transparent, var(--gold), transparent); height: 1px; }
 
-      {/* Scroll Sparkle */}
-      {isScrolling && (
-        <motion.div
-          className="fixed right-16 z-50 pointer-events-none"
-          style={{
-            y: particleY,
-            opacity: particleOpacity,
-          }}
-        >
-          <div className="relative">
+        .title-main   { font-size: clamp(56px, 10vw, 112px); font-weight: 300; line-height: 0.9; letter-spacing: -0.01em; }
+        .subtitle-main{ font-size: clamp(22px, 3vw, 36px); color: var(--stone); font-weight: 400; font-style: italic; line-height: 1.3; margin-bottom: 16px; }
+        .desc-text    { font-size: 14px; color: var(--stone); line-height: 1.8; max-width: 400px; }
+        .overline-text{ font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--stone-light); }
+        .side-text    { writing-mode: vertical-rl; text-orientation: mixed; font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone-light); }
+        .number-tag   { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-style: italic; color: var(--gold); }
+        .watermark    { font-size: clamp(180px,28vw,360px); font-weight: 700; color: transparent; -webkit-text-stroke: 1px rgba(201,168,76,0.08); line-height: 0.85; z-index: 0; position: absolute; right: -20px; bottom: -20px; user-select: none; pointer-events: none; }
+
+        .skill-chip {
+          background: transparent; border: 1px solid var(--border-strong); color: var(--gold-dark);
+          font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+          text-transform: uppercase; padding: 6px 14px; transition: all 0.3s ease; border-radius: 2px;
+        }
+        .skill-chip:hover { background: var(--gold); color: white; border-color: var(--gold); }
+
+        .contact-link {
+          display: flex; align-items: center; gap: 8px; color: var(--stone); text-decoration: none;
+          font-size: 13px; letter-spacing: 0.03em; transition: color 0.25s ease; padding: 8px 0;
+          border-bottom: 1px solid transparent;
+        }
+        .contact-link:hover { color: var(--charcoal); border-bottom-color: var(--gold); }
+
+        .resume-btn {
+          display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px;
+          background: var(--charcoal); color: var(--cream); font-family: 'DM Sans', sans-serif;
+          font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+          text-decoration: none; transition: all 0.35s ease; position: relative; overflow: hidden; border-radius: 2px;
+        }
+        .resume-btn::before { content: ''; position: absolute; inset: 0; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform 0.35s ease; }
+        .resume-btn:hover::before { transform: scaleX(1); }
+        .resume-btn span, .resume-btn svg { position: relative; z-index: 1; }
+
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: float-gentle 3s ease-in-out infinite; }
+        .scroll-indicator { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--gold), transparent); }
+
+        .cursor-dot  { position: fixed; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: transform 0.1s ease; }
+        .cursor-ring { position: fixed; width: 32px; height: 32px; border: 1px solid rgba(201,168,76,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: all 0.18s ease; }
+
+        @keyframes float-gentle { 0%,100%{transform:translateY(0)rotate(0deg)}50%{transform:translateY(-12px)rotate(1deg)} }
+        @keyframes shimmer { 0%{background-position:-200% center}100%{background-position:200% center} }
+        .shimmer-text { background: linear-gradient(90deg,var(--gold-dark) 25%,var(--gold) 50%,var(--gold-dark) 75%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s linear infinite; }
+
+        @media (prefers-reduced-motion: reduce) {
+          *,*::before,*::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+      `}</style>
+
+      {/* Custom Cursor */}
+      <div className="cursor-dot"  style={{ left: mousePosition.x, top: mousePosition.y }} />
+      <div className="cursor-ring" style={{
+        left: mousePosition.x, top: mousePosition.y,
+        transform: hoveredLink ? 'translate(-50%,-50%) scale(1.5)' : 'translate(-50%,-50%)',
+      }} />
+
+      {/* Main Section */}
+      <section id="home" ref={heroRef} className="hero-root relative min-h-screen overflow-hidden">
+
+        {/* ── GSnap Canvas Background ── */}
+        <GSnapBackground />
+
+        {/* ── Floating Chip Layer ── */}
+        <FloatingChips />
+
+        {/* Decorative Corner SVGs */}
+        <div className="pointer-events-none absolute inset-0 opacity-20" style={{ zIndex: 2 }}>
+          {[
+            ['top-8 left-8',   'M0 60 L0 0 L60 0'],
+            ['top-8 right-8',  'M60 60 L60 0 L0 0'],
+            ['bottom-8 left-8','M0 0 L0 60 L60 60'],
+            ['bottom-8 right-8','M60 0 L60 60 L0 60'],
+          ].map(([cls, d], i) => (
+            <svg key={i} className={`absolute ${cls}`} width="60" height="60" viewBox="0 0 60 60" fill="none">
+              <path d={d} stroke="#C9A84C" strokeWidth="1" />
+              <path d={d.replace(/0 /g,'10 ').replace(/60/g,'50')} stroke="#C9A84C" strokeWidth="0.5" />
+            </svg>
+          ))}
+        </div>
+
+        {/* Vertical Side Labels */}
+        <div className="absolute left-8 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col items-center gap-4">
+          <div className="gold-line w-[1px] h-16" />
+          <span className="side-text">Portfolio 2025</span>
+          <div className="gold-line w-[1px] h-16" />
+        </div>
+        <div className="absolute right-8 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col items-center gap-4">
+          <div className="gold-line w-[1px] h-16" />
+          <span className="side-text">MERN Stack</span>
+          <div className="gold-line w-[1px] h-16" />
+        </div>
+
+        {/* Content Layout */}
+        <div className="relative z-10 container mx-auto px-16 min-h-screen flex flex-col justify-center max-w-[1100px]">
+
+          {/* Top Bar */}
+          <motion.div
+            className="flex justify-between items-center pt-12 pb-8"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}
+          >
+            <div className="display-font text-sm italic tracking-wide text-[var(--stone-light)]">
+              B.Tech Information Technology
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="status-dot" />
+              <span className="overline-text">Available for work</span>
+            </div>
+          </motion.div>
+
+          <motion.div className="gold-line w-full" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.2, ease: 'easeOut' }} />
+
+          {/* Center Block */}
+          <div className="flex-1 flex flex-col justify-center py-16 gap-10">
+
+            {/* Name */}
+            <div>
+              <motion.span className="number-tag mb-3 block" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+                — 001
+              </motion.span>
+              <motion.h1
+                className="display-font shimmer-text title-main"
+                initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }}
+              >
+                Gowtham K
+              </motion.h1>
+            </div>
+
+            {/* Tagline & Skills */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-end">
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.5 }}>
+                <p className="display-font subtitle-main">Full Stack Developer</p>
+                <p className="desc-text">
+                  Crafting elegant digital experiences with the MERN stack.
+                  Sri Eshwar College of Engineering — building interfaces that matter.
+                </p>
+              </motion.div>
+              <motion.div className="flex flex-wrap gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+                {SKILLS.map((skill, i) => (
+                  <motion.span key={skill} className="skill-chip" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 + i * 0.07 }}>
+                    {skill}
+                  </motion.span>
+                ))}
+              </motion.div>
+            </div>
+
+            <motion.div className="gold-line w-full" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 1, ease: 'easeOut' }} />
+
+            {/* Actions */}
             <motion.div
-              className="absolute inset-0 blur-3xl opacity-40 scale-[2]"
-              style={{
-                background: 'radial-gradient(circle, rgba(239, 68, 68, 0.8) 0%, rgba(220, 38, 38, 0.4) 40%, transparent 70%)'
-              }}
-              animate={{
-                scale: [2, 2.3, 2],
-                opacity: [0.4, 0.6, 0.4]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-
-            <motion.div
-              animate={{
-                rotate: [0, 360],
-                scale: [1, 1.15, 1],
-              }}
-              transition={{
-                rotate: { duration: 4, repeat: Infinity, ease: "linear" },
-                scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
-              }}
+              className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1 }}
             >
-              <Sparkles
-                className="relative w-20 h-20 text-red-400"
-                style={{
-                  filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.9)) drop-shadow(0 0 25px rgba(220, 38, 38, 0.6))',
-                }}
-                strokeWidth={1.5}
-              />
+              <a href="/Gowtham_Resume_2025.pdf" download="Gowtham_K_Resume.pdf" className="resume-btn">
+                <Download size={15} />
+                <span>Download Résumé</span>
+                <ArrowUpRight size={14} />
+              </a>
+              <div className="flex flex-wrap gap-x-8 gap-y-4">
+                {LINKS.map((link, i) => (
+                  <motion.a
+                    key={link.label}
+                    href={link.href}
+                    target={link.href.startsWith('http') ? '_blank' : undefined}
+                    rel="noopener noreferrer"
+                    className="contact-link"
+                    onMouseEnter={() => setHoveredLink(link.label)}
+                    onMouseLeave={() => setHoveredLink(null)}
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 + i * 0.08 }}
+                  >
+                    <link.icon size={13} className="text-[var(--gold)]" />
+                    <span>{link.display}</span>
+                  </motion.a>
+                ))}
+              </div>
             </motion.div>
           </div>
-        </motion.div>
-      )}
 
-      {/* Main Content */}
-      <div className="container mx-auto px-6 relative z-20">
-        <div className="flex flex-col items-center justify-center min-h-screen py-20 gap-12">
-          
-          {/* Center Content */}
+          {/* Bottom Bar */}
           <motion.div
-            className="max-w-2xl text-center"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            className="flex justify-between items-center pb-12 pt-4 border-t border-[var(--border)]"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}
           >
-            <motion.h1
-              className="text-6xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-tight"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-            >
-              GOWTHAM K
-            </motion.h1>
-
-            <motion.p
-              className="text-3xl md:text-4xl font-bold text-gray-200 mb-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              Full Stack Developer
-            </motion.p>
-
-            <motion.p
-              className="text-lg text-gray-300 mb-8 leading-relaxed"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-            >
-              B.Tech Information Technology student at Sri Eshwar College of Engineering,
-              specializing in MERN stack development
-            </motion.p>
-
-            {/* Download Resume Button */}
-            <motion.a
-              href="/Gowtham_Resume_2025.pdf"
-              download="Gowtham_K_Resume.pdf"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white text-lg font-medium rounded-md hover:from-red-700 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl mb-8 cursor-pointer"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.3 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Download className="w-5 h-5" />
-              Download Resume
-            </motion.a>
-
-            {/* Contact Info */}
-            <motion.div
-              className="flex flex-wrap justify-center gap-6 text-sm text-gray-300"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.5 }}
-            >
-              <a href="tel:7373692501" className="hover:text-red-400 transition-colors flex items-center gap-2 cursor-pointer">
-                <Phone className="w-4 h-4" /> 7373692501
-              </a>
-              <a href="mailto:gowtham.k2023it@sece.ac.in" className="hover:text-red-400 transition-colors flex items-center gap-2 cursor-pointer">
-                <Mail className="w-4 h-4" /> Email
-              </a>
-              <a href="https://github.com/GowthamkIT" target="_blank" rel="noopener noreferrer" className="hover:text-red-400 transition-colors flex items-center gap-2 cursor-pointer">
-                <Github className="w-4 h-4" /> GitHub
-              </a>
-              <a href="https://www.linkedin.com/in/gowtham-k-0577a131a" target="_blank" rel="noopener noreferrer" className="hover:text-red-400 transition-colors flex items-center gap-2 cursor-pointer">
-                <Linkedin className="w-4 h-4" /> LinkedIn
-              </a>
-            </motion.div>
+            <span className="overline-text">Sri Eshwar College of Engineering</span>
+            <div className="flex flex-col items-center gap-2">
+              <span className="overline-text tracking-[0.18em] text-[10px]">Scroll</span>
+              <motion.div
+                className="scroll-indicator"
+                animate={{ scaleY: [0, 1, 0], originY: 0 }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            </div>
+            <span className="display-font italic text-[13px] text-[var(--stone-light)]">
+              gowtham.k2023it@sece.ac.in
+            </span>
           </motion.div>
         </div>
-      </div>
 
-      {/* Animated Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 cursor-none"
-        animate={{ y: [0, -10, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-      >
-        <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center">
-          <motion.div
-            className="w-1 h-2 bg-red-500 rounded-full mt-2"
-            animate={{ y: [0, 16, 0], opacity: [1, 0, 1] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-          />
-        </div>
-      </motion.div>
-    </section>
+        {/* Watermark */}
+        <motion.div className="display-font watermark" style={{ y: smoothY }}>
+          GK
+        </motion.div>
+
+      </section>
+    </>
   );
 }
