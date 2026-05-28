@@ -1,4 +1,4 @@
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d0593ef4-538f-44b4-b24a-2ce6f8964bdd" /># 🚀 Portfolio 2025 — Gowtham K
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d0593ef4-538f-44b4-b24a-2ce6f8964bdd" /> Portfolio 2025 — Gowtham K
 
 <div align="center">
 
