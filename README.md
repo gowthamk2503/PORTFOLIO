@@ -1,4 +1,4 @@
-# 🚀 Portfolio 2025 — Gowtham K
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d0593ef4-538f-44b4-b24a-2ce6f8964bdd" /># 🚀 Portfolio 2025 — Gowtham K
 
 <div align="center">
 
@@ -209,7 +209,7 @@ Worked with REST APIs and Agile development workflows.
 ## Clone Repository
 
 ```bash
-git clone https://github.com/your-username/portfolio.git
+git clone https://github.com/gowthamk2503/PORTFOLIO
 ```
 
 ## Navigate to Project
@@ -241,8 +241,7 @@ npm run build
 # 📸 Screenshots
 
 ## 🏠 Home Page
-
-Add your screenshot here.
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e3533819-a772-4193-83a6-d72c34ff72b0" />
 
 ```bash
 /public/screenshots/home.png
@@ -250,13 +249,10 @@ Add your screenshot here.
 
 ## 💼 Projects Section
 
-Add your screenshot here.
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/90716f38-eb45-4c97-a738-b674fb97d9c3" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/84525354-70c9-4705-82e4-4b7deab9930d" />
 
-## 📱 Mobile Responsive Design
 
-Add your screenshot here.
-
----
 
 # 📈 Future Improvements
 
